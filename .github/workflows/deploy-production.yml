@@ -80,7 +80,7 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate --force --no-interaction
-          php artisan test --compact
+          php artisan test --without-tty
 
       - name: Require deployment secrets
         env:
