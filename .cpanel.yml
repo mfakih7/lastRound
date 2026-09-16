@@ -1,0 +1,21 @@
+---
+# cPanel Git Version Control deployment for LastRound.
+# Copies from the cPanel-managed Git checkout into /home/fitcbfra/lastround-app.
+# Do not point this file at public_html or any other website.
+# Do not use wildcards: they can copy .git into production.
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/fitcbfra/lastround-app
+    - export PHP_BIN=/opt/cpanel/ea-php83/root/usr/bin/php
+    - export COMPOSER_BIN=/home/fitcbfra/bin/composer
+    - test -d $DEPLOYPATH
+    - test -f $DEPLOYPATH/.env
+    - 'if [ "$PWD" != "$DEPLOYPATH" ]; then /bin/cp -R app bootstrap config database resources routes $DEPLOYPATH; fi'
+    - 'if [ "$PWD" != "$DEPLOYPATH" ]; then /bin/cp artisan composer.json composer.lock $DEPLOYPATH; fi'
+    - 'if [ "$PWD" != "$DEPLOYPATH" ]; then /bin/mkdir -p $DEPLOYPATH/public; /bin/cp -R public/. $DEPLOYPATH/public/; fi'
+    - 'cd $DEPLOYPATH && $PHP_BIN $COMPOSER_BIN install --no-dev --no-interaction --prefer-dist --optimize-autoloader'
+    - 'cd $DEPLOYPATH && $PHP_BIN artisan migrate --force --no-interaction'
+    - 'cd $DEPLOYPATH && $PHP_BIN artisan optimize:clear --no-interaction'
+    - 'cd $DEPLOYPATH && $PHP_BIN artisan config:cache --no-interaction'
+    - 'cd $DEPLOYPATH && $PHP_BIN artisan view:cache --no-interaction'
+    - 'cd $DEPLOYPATH && $PHP_BIN artisan event:cache --no-interaction'

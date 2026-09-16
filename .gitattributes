@@ -6,6 +6,11 @@
 *.md diff=markdown
 *.php diff=php
 
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+
 /.github export-ignore
 CHANGELOG.md export-ignore
 .styleci.yml export-ignore
